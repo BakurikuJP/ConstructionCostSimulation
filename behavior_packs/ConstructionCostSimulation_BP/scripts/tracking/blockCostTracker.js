@@ -23,7 +23,7 @@ export function registerBlockCostTracking() {
         const result = addConstructionCost(player, blockCost.costYen);
 
         player.sendMessage(
-            `§a${blockCost.label} 1m3: ${formatReadableYen(blockCost.costYen)}を計上しました。合計: ${formatReadableYen(result.totalCostYen)}`
+            `§a${blockCost.label} 1m3: ${formatReadableYen(blockCost.costYen)}を建材費に計上しました。合計: ${formatReadableYen(result.totalCostYen)}`
         );
     });
 }

@@ -1,20 +1,33 @@
 import { world } from '@minecraft/server';
+import { LAND_COST_YEN } from '../config/landCost.js';
 
 export const SCOREBOARD_IDS = {
-    totalCost: 'BuildCost',
-    totalCostK: 'BuildCostK',
-    lastCost: 'BuildLast',
-    lastCostK: 'BuildLastK',
-    blockCount: 'BuildBlocks'
+    materialCostYen: 'BuildMaterial',
+    landCostYen: 'BuildLand',
+    totalCostYen: 'BuildTotal',
+    display: 'BuildCostBoard'
 };
 
 const SCOREBOARD_NAMES = {
-    [SCOREBOARD_IDS.totalCost]: '建築コスト合計',
-    [SCOREBOARD_IDS.totalCostK]: '建築コスト合計(千円)',
-    [SCOREBOARD_IDS.lastCost]: '直近ブロック単価',
-    [SCOREBOARD_IDS.lastCostK]: '直近ブロック単価(千円)',
-    [SCOREBOARD_IDS.blockCount]: '建築ブロック数'
+    [SCOREBOARD_IDS.materialCostYen]: '建材費',
+    [SCOREBOARD_IDS.landCostYen]: '土地取得価格',
+    [SCOREBOARD_IDS.totalCostYen]: '合計金額',
+    [SCOREBOARD_IDS.display]: '建築コスト(千円)'
 };
+
+const DISPLAY_ROWS = {
+    materialCost: '建材費',
+    landCost: '土地取得価格',
+    totalCost: '合計金額'
+};
+
+const LEGACY_SCOREBOARD_IDS = [
+    'BuildCost',
+    'BuildCostK',
+    'BuildLast',
+    'BuildLastK',
+    'BuildBlocks'
+];
 
 function toThousandsOfYen(amountYen) {
     return Math.round(amountYen / 1000);
@@ -28,44 +41,79 @@ function ensureObjective(objectiveId) {
     return objective;
 }
 
-function getScore(objective, player) {
+function getScore(objective, participant) {
     try {
-        return objective.getScore(player) ?? 0;
+        return objective.getScore(participant) ?? 0;
     } catch {
         return 0;
     }
 }
 
-export function initializeCostScoreboards(player) {
-    for (const objectiveId of Object.values(SCOREBOARD_IDS)) {
-        const objective = ensureObjective(objectiveId);
-        if (player && getScore(objective, player) === 0) {
-            objective.setScore(player, 0);
+function updateDisplayBoard(materialCostYen, landCostYen) {
+    const displayObjective = ensureObjective(SCOREBOARD_IDS.display);
+    const totalCostYen = materialCostYen + landCostYen;
+
+    displayObjective.setScore(DISPLAY_ROWS.materialCost, toThousandsOfYen(materialCostYen));
+    displayObjective.setScore(DISPLAY_ROWS.landCost, toThousandsOfYen(landCostYen));
+    displayObjective.setScore(DISPLAY_ROWS.totalCost, toThousandsOfYen(totalCostYen));
+}
+
+function showDisplayBoard(player) {
+    if (!player) {
+        return;
+    }
+
+    player.runCommand(`scoreboard objectives setdisplay sidebar ${SCOREBOARD_IDS.display}`);
+}
+
+function removeLegacyObjectives() {
+    for (const objectiveId of LEGACY_SCOREBOARD_IDS) {
+        const objective = world.scoreboard.getObjective(objectiveId);
+        if (objective) {
+            world.scoreboard.removeObjective(objectiveId);
         }
     }
+}
+
+export function initializeCostScoreboards(player) {
+    removeLegacyObjectives();
+
+    const materialObjective = ensureObjective(SCOREBOARD_IDS.materialCostYen);
+    const landObjective = ensureObjective(SCOREBOARD_IDS.landCostYen);
+    const totalObjective = ensureObjective(SCOREBOARD_IDS.totalCostYen);
+
+    const currentMaterialCost = player ? getScore(materialObjective, player) : 0;
+    const currentLandCost = LAND_COST_YEN;
+
+    if (player) {
+        materialObjective.setScore(player, currentMaterialCost);
+        landObjective.setScore(player, currentLandCost);
+        totalObjective.setScore(player, currentMaterialCost + currentLandCost);
+    }
+
+    updateDisplayBoard(currentMaterialCost, currentLandCost);
+    showDisplayBoard(player);
 }
 
 export function addConstructionCost(player, costYen) {
     initializeCostScoreboards(player);
 
-    const totalObjective = ensureObjective(SCOREBOARD_IDS.totalCost);
-    const totalKObjective = ensureObjective(SCOREBOARD_IDS.totalCostK);
-    const lastObjective = ensureObjective(SCOREBOARD_IDS.lastCost);
-    const lastKObjective = ensureObjective(SCOREBOARD_IDS.lastCostK);
-    const blockCountObjective = ensureObjective(SCOREBOARD_IDS.blockCount);
+    const materialObjective = ensureObjective(SCOREBOARD_IDS.materialCostYen);
+    const landObjective = ensureObjective(SCOREBOARD_IDS.landCostYen);
+    const totalObjective = ensureObjective(SCOREBOARD_IDS.totalCostYen);
 
-    const nextTotal = getScore(totalObjective, player) + costYen;
-    const nextBlockCount = getScore(blockCountObjective, player) + 1;
+    const nextMaterialCost = getScore(materialObjective, player) + costYen;
+    const landCost = LAND_COST_YEN;
+    const nextTotalCost = nextMaterialCost + landCost;
 
-    totalObjective.setScore(player, nextTotal);
-    totalKObjective.setScore(player, toThousandsOfYen(nextTotal));
-    lastObjective.setScore(player, costYen);
-    lastKObjective.setScore(player, toThousandsOfYen(costYen));
-    blockCountObjective.setScore(player, nextBlockCount);
+    materialObjective.setScore(player, nextMaterialCost);
+    landObjective.setScore(player, landCost);
+    totalObjective.setScore(player, nextTotalCost);
+    updateDisplayBoard(nextMaterialCost, landCost);
 
     return {
-        totalCostYen: nextTotal,
-        totalCostKiloYen: toThousandsOfYen(nextTotal),
-        blockCount: nextBlockCount
+        materialCostYen: nextMaterialCost,
+        landCostYen: landCost,
+        totalCostYen: nextTotalCost
     };
 }
