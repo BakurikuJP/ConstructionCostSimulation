@@ -6,6 +6,15 @@ function formatYen(amount) {
     return amount.toLocaleString('ja-JP');
 }
 
+function formatReadableYen(amount) {
+    if (amount >= 10000) {
+        const manYen = amount / 10000;
+        return `${manYen.toFixed(manYen >= 10 ? 0 : 1)}万円`;
+    }
+
+    return `${formatYen(amount)}円`;
+}
+
 export function registerBlockCostTracking() {
     world.afterEvents.playerPlaceBlock.subscribe((event) => {
         const player = event.player;
@@ -14,7 +23,7 @@ export function registerBlockCostTracking() {
         const result = addConstructionCost(player, blockCost.costYen);
 
         player.sendMessage(
-            `§a${blockCost.label} 1m3: ${formatYen(blockCost.costYen)}円を計上しました。合計: ${formatYen(result.totalCostYen)}円`
+            `§a${blockCost.label} 1m3: ${formatReadableYen(blockCost.costYen)}を計上しました。合計: ${formatReadableYen(result.totalCostYen)}`
         );
     });
 }
