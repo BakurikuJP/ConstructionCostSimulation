@@ -1,0 +1,37 @@
+{
+    "format_version": 2,
+    "metadata": {
+        "authors": ["Metamoverse"]
+    },
+    "header": {
+        "name": "Metamoverse Construction Cost Simulation BP",
+        "description": "Metamoverse向けにブロック設置時の建築コストをスコアボードへ計上するアドオン",
+        "uuid": "93d922ab-4286-41a5-842b-5e4170b46df2",
+        "version": [1, 0, 0],
+        "min_engine_version": [1, 21, 0]
+    },
+    "modules": [
+        {
+            "type": "data",
+            "uuid": "702bd612-efc8-481e-90e9-09e7dad5238f",
+            "version": [1, 0, 0]
+        },
+        {
+            "type": "script",
+            "language": "javascript",
+            "uuid": "ba6983c6-8dae-4bfe-8a74-80ec64b1410c",
+            "entry": "scripts/main.js",
+            "version": [1, 0, 0]
+        }
+    ],
+    "dependencies": [
+        {
+            "module_name": "@minecraft/server",
+            "version": "1.11.0"
+        },
+        {
+            "uuid": "e1af1456-9f51-4db2-8150-83cbe2ef3964",
+            "version": [1, 0, 0]
+        }
+    ]
+}

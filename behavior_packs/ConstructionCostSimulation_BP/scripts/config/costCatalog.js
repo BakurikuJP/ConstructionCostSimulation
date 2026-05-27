@@ -1,0 +1,22 @@
+export const MATERIAL_COSTS = {
+    other: { costYen: 10000, label: 'その他', category: 'other' },
+    concrete: { costYen: 24050, label: 'コンクリート', category: 'concrete' },
+    concretePowder: { costYen: 18000, label: 'コンクリート粉末', category: 'concrete_powder' },
+    wood: { costYen: 95000, label: '木材', category: 'wood' },
+    bamboo: { costYen: 70000, label: '竹材', category: 'wood' },
+    stone: { costYen: 12000, label: '石材・レンガ', category: 'stone' },
+    rawStone: { costYen: 8000, label: '石材', category: 'stone' },
+    cobblestone: { costYen: 6500, label: '丸石', category: 'stone' },
+    brick: { costYen: 35000, label: 'レンガ', category: 'ceramic' },
+    glass: { costYen: 12000, label: 'ガラス', category: 'glass' },
+    textile: { costYen: 25000, label: '繊維・内装材', category: 'textile' },
+    ceramic: { costYen: 30000, label: '焼成材', category: 'ceramic' },
+    copper: { costYen: 130000, label: '銅材', category: 'metal' },
+    iron: { costYen: 150000, label: '鉄・鋼材', category: 'metal' },
+    luxury: { costYen: 300000, label: '高価装飾材', category: 'luxury' },
+    equipment: { costYen: 80000, label: '設備・機械部材', category: 'equipment' },
+    lighting: { costYen: 45000, label: '照明設備', category: 'lighting' },
+    earth: { costYen: 3000, label: '土砂・地盤材', category: 'earth' },
+    landscape: { costYen: 5000, label: '植栽・自然材', category: 'landscape' },
+    iceSnow: { costYen: 4000, label: '氷雪材', category: 'ice_snow' }
+};
