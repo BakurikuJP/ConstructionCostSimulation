@@ -1,10 +1,10 @@
 {
     "format_version": 2,
     "metadata": {
-        "authors": ["Metamoverse"]
+        "authors": ["Construction Cost Simulation"]
     },
     "header": {
-        "name": "Metamoverse Construction Cost Simulation RP",
+        "name": "Construction Cost Simulation RP",
         "description": "建築コストシミュレーション用リソースパック",
         "uuid": "e1af1456-9f51-4db2-8150-83cbe2ef3964",
         "version": [1, 0, 0],

@@ -1,11 +1,11 @@
 {
     "format_version": 2,
     "metadata": {
-        "authors": ["Metamoverse"]
+        "authors": ["Construction Cost Simulation"]
     },
     "header": {
-        "name": "Metamoverse Construction Cost Simulation BP",
-        "description": "Metamoverse向けにブロック設置時の建築コストをスコアボードへ計上するアドオン",
+        "name": "Construction Cost Simulation BP",
+        "description": "ブロック設置時の建築コストをスコアボードへ計上する独立アドオン",
         "uuid": "93d922ab-4286-41a5-842b-5e4170b46df2",
         "version": [1, 0, 0],
         "min_engine_version": [1, 21, 0]

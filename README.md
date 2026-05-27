@@ -1,4 +1,4 @@
-# Metamoverse Construction Cost Simulation
+# Construction Cost Simulation
 
 建築材料ブロックを設置したときに、1 ブロック = 1m3 として建築コストをスコアボードへ計上する Bedrock アドオンです。
 
