@@ -22,8 +22,15 @@ export function registerBlockCostTracking() {
 
         const result = addConstructionCost(player, blockCost.costYen);
 
-        player.sendMessage(
-            `§a${blockCost.label} 1m3: ${formatReadableYen(blockCost.costYen)}を建材費に計上しました。合計: ${formatReadableYen(result.totalCostYen)}`
-        );
+        // player.sendMessage(
+        //     `§a${blockCost.label} 1m3: ${formatReadableYen(blockCost.costYen)}を建材費に計上しました。合計: ${formatReadableYen(result.totalCostYen)}`
+        // );
+    });
+
+    world.afterEvents.playerBreakBlock.subscribe((event) => {
+        const player = event.player;
+        const blockCost = getBlockCost(event.brokenBlockPermutation.type.id);
+
+        addConstructionCost(player, -blockCost.costYen);
     });
 }
