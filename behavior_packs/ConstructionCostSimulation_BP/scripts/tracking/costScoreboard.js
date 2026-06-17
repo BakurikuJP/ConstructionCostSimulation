@@ -8,6 +8,8 @@ export const SCOREBOARD_IDS = {
     display: 'BuildCostBoard'
 };
 
+const ESTIMATED_CONSTRUCTION_COST_FACTOR = 4;
+
 const SCOREBOARD_NAMES = {
     [SCOREBOARD_IDS.materialCostYen]: '建材費',
     [SCOREBOARD_IDS.landCostYen]: '土地取得価格',
@@ -16,10 +18,14 @@ const SCOREBOARD_NAMES = {
 };
 
 const DISPLAY_ROWS = {
-    materialCost: '建材費',
+    estimatedConstructionCost: '概算建設費',
     landCost: '土地取得価格',
     totalCost: '合計金額'
 };
+
+const LEGACY_DISPLAY_ROWS = [
+    '建材費'
+];
 
 const LEGACY_SCOREBOARD_IDS = [
     'BuildCost',
@@ -31,6 +37,18 @@ const LEGACY_SCOREBOARD_IDS = [
 
 function toThousandsOfYen(amountYen) {
     return Math.round(amountYen / 1000);
+}
+
+function toEstimatedConstructionCost(materialCostYen) {
+    return materialCostYen * ESTIMATED_CONSTRUCTION_COST_FACTOR;
+}
+
+function removeDisplayRow(displayObjective, displayRow) {
+    try {
+        displayObjective.removeParticipant(displayRow);
+    } catch {
+        // The row may not exist yet on fresh worlds.
+    }
 }
 
 function ensureObjective(objectiveId) {
@@ -51,9 +69,14 @@ function getScore(objective, participant) {
 
 function updateDisplayBoard(materialCostYen, landCostYen) {
     const displayObjective = ensureObjective(SCOREBOARD_IDS.display);
-    const totalCostYen = materialCostYen + landCostYen;
+    const estimatedConstructionCostYen = toEstimatedConstructionCost(materialCostYen);
+    const totalCostYen = estimatedConstructionCostYen + landCostYen;
 
-    displayObjective.setScore(DISPLAY_ROWS.materialCost, toThousandsOfYen(materialCostYen));
+    for (const displayRow of LEGACY_DISPLAY_ROWS) {
+        removeDisplayRow(displayObjective, displayRow);
+    }
+
+    displayObjective.setScore(DISPLAY_ROWS.estimatedConstructionCost, toThousandsOfYen(estimatedConstructionCostYen));
     displayObjective.setScore(DISPLAY_ROWS.landCost, toThousandsOfYen(landCostYen));
     displayObjective.setScore(DISPLAY_ROWS.totalCost, toThousandsOfYen(totalCostYen));
 }
